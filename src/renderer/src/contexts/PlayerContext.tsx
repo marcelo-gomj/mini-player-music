@@ -41,7 +41,12 @@ function PlayerProvider({ children } : PlayerProviderProps ){
   // play list musics
   function playQueue(music: number, queue : string[]){
     const { playContextAudio } = window.api.howler;
-    const context = playContextAudio(queue, music, setCurrentMusic)
+    const context = playContextAudio(
+      queue, 
+      music, 
+      setCurrentMusic, 
+      setHowlerGlobal
+    );
     
     setCurrentMusic(music);
     setQueueGlobal(queue);

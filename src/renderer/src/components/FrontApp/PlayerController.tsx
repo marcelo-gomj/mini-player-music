@@ -10,10 +10,10 @@ import NextButton from "../Controllers/NextButton";
 import ProgressBar from "./ProgressBar";
 
 type PlayerControllerProps = {
-  durationTotal: number
+  durationTotal: number | undefined
 }
 
-function PlayerController({ durationTotal }){
+function PlayerController({ durationTotal } : PlayerControllerProps){
   const PlayerHandler = useContext(PlayerContext);
   
   const buttons = [

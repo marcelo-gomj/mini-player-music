@@ -12,7 +12,7 @@ import OneTurn from '../../assets/one-turn.svg?react';
 
 type RepeatMode  = 'one-turn'  | 'repeat' | 'repeat-one';
 
-function ReapeatButton({ ctx : { playQueue } } : ContextHowl){
+function ReapeatButton({} : ContextHowl){
   const [repeatState, setRepeatState] = useState<RepeatMode>('one-turn');
 
   const iconsState = {

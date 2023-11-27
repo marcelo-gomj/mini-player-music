@@ -3,7 +3,7 @@ import { ReactNode, useContext, useRef } from "react";
 
 type HandleProgressProps = {
 	children: ReactNode,
-	total: number,
+	total ?: number,
   setDuration: (duration: number ) => void
 }
 
@@ -22,7 +22,7 @@ function HandleProgress({ children, total, setDuration } : HandleProgressProps){
 	)
 
 	function handleClickProgressBar(event : React.MouseEvent<HTMLDivElement, MouseEvent>){
-    if(!holwerGlobal || !progressBarRef.current) return;
+    if(!holwerGlobal || !progressBarRef.current || !total) return;
 
     const { setProgressMusic } = window.api.howler;
 

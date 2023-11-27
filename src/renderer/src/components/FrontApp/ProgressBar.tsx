@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import HandleProgress from "./HandleProgressBar";
 
 type ProgressBarProps = {
-  durationTotal: number
+  durationTotal ?: number 
 }
 
 function ProgressBar({ durationTotal } : ProgressBarProps) {
@@ -14,8 +14,8 @@ function ProgressBar({ durationTotal } : ProgressBarProps) {
   useEffect(updateDuration, [currentMusic]);
 
   const calculatedProgress = progressBarUpdates(duration);
-  const progressBar = { left: `-${calculatedProgress}%`};
-  const progressPointer = { right : `calc(${calculatedProgress}% - 0.5rem)`}
+  const progressBar = { left: `-${calculatedProgress || 100}%`};
+  const progressPointer = { right :`calc(${calculatedProgress || 100}% - 0.5rem)`}
 
   return (
     <div
@@ -34,14 +34,14 @@ function ProgressBar({ durationTotal } : ProgressBarProps) {
           >
             <div
               style={progressBar} 
-              className="absolute group-hover:bg-white h-full top-0 w-[100%] bg-neutral-200 rounded-md duration-100 transition-[left]"
+              className="absolute group-hover:bg-white h-full top-0 left-[-100%] w-[100%] bg-neutral-200 rounded-md duration-100 transition-[left]"
             ></div>
             
           </div> 
 
           <div 
             style={progressPointer}
-            className={`invisible group-hover:visible absolute top-[-0.3rem] bg-[white] h-4 w-4 rounded-full duration-75 transition-[right]`}
+            className={`invisible group-hover:visible right-0 absolute top-[-0.3rem] bg-[white] h-4 w-4 rounded-full duration-75 transition-[right]`}
           ></div>
         </div>
       </HandleProgress>
@@ -85,7 +85,7 @@ function ProgressBar({ durationTotal } : ProgressBarProps) {
   }
 
   function progressBarUpdates(duration : number){
-    return (100 - Number((Math.trunc(duration) / (durationTotal / 100)).toFixed(6)))
+    return (100 - Number((Math.trunc(duration) / ((durationTotal || 0) / 100)).toFixed(6)))
   }
 
   function pointDuration(duration: number){

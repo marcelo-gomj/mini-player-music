@@ -5,7 +5,7 @@ import Suffle from "../../assets/suffle.svg?react"
 import { useState } from "react";
 
 
-function SuffleButton({ ctx : { playQueue } } : ContextHowl){
+function SuffleButton({ } : ContextHowl){
   const [isSuffle, setIsSuffle] = useState(false);
 
   return (

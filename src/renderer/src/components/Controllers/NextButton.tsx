@@ -15,7 +15,7 @@ function NextButton({ ctx : { handleCurrentMusic, currentMusic, queueGlobal }} :
 
   return (
     <div
-      className={`${hasNextMusic ? '' : 'opacity-50'}`}
+      className={`${hasNextMusic ? '' : 'opacity-25'}`}
       onClick={hasNextMusic ? handleClickNextMusic : undefined}
     >
       <Next />

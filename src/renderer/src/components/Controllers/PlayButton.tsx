@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ContextHowl } from "@renderer/types/howlerType";
 
 //@ts-ignore
@@ -8,8 +8,8 @@ import Pause from "../../assets/pause.svg?react"
 
 import { map } from "ramda";
 
-function PlayButton({ ctx : { playQueue, queueGlobal, currentMusic, holwerGlobal } } : ContextHowl){
-  const [isPlaying, setIsPlaying] = useState(false);
+function PlayButton({ ctx : { playQueue, queueGlobal} } : ContextHowl){
+  const [isPlaying] = useState(false);
 
   // useEffect(() => {
   //   if(!holwerGlobal) return;
