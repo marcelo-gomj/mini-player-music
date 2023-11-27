@@ -21,7 +21,9 @@ function Player(){
 	const musicStatus = music ? { 
 		title: music.title,
 		track: music.track,
-		album: music.album	
+		album: music.album,
+		artist: music.artist,
+		duration: music.duration
 	} : null;
 
 	return (
@@ -32,12 +34,12 @@ function Player(){
 					mimeType={music?.mimeType} 
 				/> 
 
-				<div className="px-1 space-y-12">
+				<div className="px-1 space-y-8">
 					<TrackDetails 
 						music={musicStatus}		
 					/>
 
-					<PlayerController />
+					<PlayerController durationTotal={music?.duration}/>
 
 				</div>
 			</div>

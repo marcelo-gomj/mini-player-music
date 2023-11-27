@@ -11,13 +11,12 @@ import { map } from "ramda";
 function PlayButton({ ctx : { playQueue, queueGlobal, currentMusic, holwerGlobal } } : ContextHowl){
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    if(!holwerGlobal) return;
+  // useEffect(() => {
+  //   if(!holwerGlobal) return;
     
-    const { checkIsPlaying } = window.api.howler;
-    
-    holwerGlobal({}, checkIsPlaying, setIsPlaying );
-  }, [currentMusic])
+  //   const { checkIsPlaying } = window.api.howler;
+  //   holwerGlobal({}, checkIsPlaying, setIsPlaying );
+  // }, [currentMusic])
 
   return (
     <div 
@@ -38,25 +37,34 @@ function PlayButton({ ctx : { playQueue, queueGlobal, currentMusic, holwerGlobal
     </div>
   )
 
-
-  function handlePlayButton(){
-    const { libraryChecker } = window.api;
-    const PATH_BASE = 'D:\\lib';
-
+  function handlePlayButton(){    
     if(!queueGlobal.length){
+      const { libraryChecker } = window.api;
+      const PATH_BASE = 'D:\\lib';
+
       const paths = map(
         (path) => (PATH_BASE + '\\' + path),
         libraryChecker(PATH_BASE)
       )
 
-      console.log("PATHS", paths)
       playQueue(0, paths)
 
       return;
     }
+
+    // if(holwerGlobal){
+    //   const { playMusic } = window.api.howler;
+    //   holwerGlobal({}, playMusic, setIsPlaying)
+    // }
+
   }
 
+  // function handlePauseButton(){
+  //   if(!holwerGlobal) return;
 
+  //   const { pauseMusic } = window.api.howler;
+  //   holwerGlobal({}, pauseMusic, setIsPlaying)
+  // }
 }
 
 export default PlayButton;

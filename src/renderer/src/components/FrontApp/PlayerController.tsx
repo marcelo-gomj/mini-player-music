@@ -9,7 +9,11 @@ import ReapeatButton from "../Controllers/RepeatButton";
 import NextButton from "../Controllers/NextButton";
 import ProgressBar from "./ProgressBar";
 
-function PlayerController(){
+type PlayerControllerProps = {
+  durationTotal: number
+}
+
+function PlayerController({ durationTotal }){
   const PlayerHandler = useContext(PlayerContext);
   
   const buttons = [
@@ -30,7 +34,7 @@ function PlayerController(){
         { R.map( GenerateButtons, buttons ) }
       </ul>
 
-      <ProgressBar />
+      <ProgressBar durationTotal={durationTotal} />
     </section>
   )
 

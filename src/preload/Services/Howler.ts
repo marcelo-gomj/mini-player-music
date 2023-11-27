@@ -1,47 +1,32 @@
 import { Howl } from "howler";
 // import store from "./ElectronStore";
 
-type StateFunctionProp <T> = ((arg: T) => void);
+type StateFunctionProp <T> = ((arg: T) => void | number ) ;
 type HandlerHowl <T> = ((howl: Howl, state : StateFunctionProp<T>) => void) | null;
 type UpdateCurrentMusic = { 
   currentMusicId ?: number, 
   updateQueueMusics ?: string[] 
 };
 
-function createHowlContext(musicSource: string){
-  return new Howl({
-    src : musicSource,
-    html5: true,
-    // volume: store("volume")
-  });
-}
-
-
 function playContextAudio( 
   queueMusics: string[], 
   initialCurrentMusic: number, 
   setNextMusicQueue: StateFunctionProp<number | null> 
 ) {
-  let howlContext = createHowlContext(
-    queueMusics[initialCurrentMusic]
-  );
-  
-  // init music
-  howlContext.play();
+  const currentMusic = queueMusics[initialCurrentMusic];
+  // create context of music
+  const howlContext = new Howl({
+    src : currentMusic,
+    html5: true,
+    volume: 0.05
+  });
 
-  // set event for next music in the playlist
-  howlContext.once('end', () => {
-    howlContext.unload();
-    const nextMusic = initialCurrentMusic += 1;
-    setNextMusicQueue(nextMusic);
-    howlContext = createHowlContext(queueMusics[nextMusic]);
-    howlContext.play();
-  })
+  howlContext.play()
 
   return function howlerHandler<T>(
     { currentMusicId, updateQueueMusics } : UpdateCurrentMusic,
     func ?: HandlerHowl<T>, 
-    updateState ?: StateFunctionProp<T | typeof howlerHandler>,
+    updateState ?: StateFunctionProp<T | typeof howlerHandler >,
   ){
     if(func) {
       func(howlContext, updateState || (() => {}))
@@ -61,18 +46,26 @@ function playContextAudio(
       // update howler that handle current state of music
       updateState(() => context)
     }
-    
   }
 }
 
-function checkIsPlaying(howl: Howl, setIsPlay: StateFunctionProp<boolean>){
-  setIsPlay(
-    howl.playing()
+function currentDuration(howl: Howl, setDuration: StateFunctionProp<number>){
+  setDuration(
+    howl.seek()
   )
 }
 
 
+function setProgressMusic(howl: Howl, setProgress: StateFunctionProp<number>) {
+  const progress = setProgress(0);
+  
+  if(progress || progress === 0){
+    howl.seek(progress)
+  }
+}
+
 export default {
   playContextAudio,
-  checkIsPlaying
+  currentDuration,
+  setProgressMusic
 }
