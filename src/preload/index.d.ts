@@ -1,7 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import { IAudioMetadata } from 'music-metadata';
 import howler from "./Services/Howler";
-// import store from "./Services/ElectronStore";
+import config from "./Services/ElectronStore";
 import { libraryChecker } from "./updateLibrary/chekFolderTest";
 
 
@@ -14,7 +14,7 @@ declare global {
         image: string | null 
       }>,
       howler : typeof howler,
-      // store: typeof store
+      config: typeof config,
       libraryChecker:  typeof libraryChecker
     }
   }

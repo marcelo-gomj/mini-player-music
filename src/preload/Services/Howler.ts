@@ -1,5 +1,5 @@
 import { Howl } from "howler";
-// import store from "./ElectronStore";
+import config from "./ElectronStore";
 
 type StateFunctionProp <T> = ((arg: T) => (T | void))
 type HandlerHowl <T> = (howl: Howl, state : StateFunctionProp<T>) => T;
@@ -19,9 +19,9 @@ function playContextAudio(
   const howlContext = new Howl({
     src : currentMusic,
     html5: true,
-    volume: 0.05
+    volume: config("volume")
   });
-
+  console.log(config("volume"))
   howlContext.play();
 
   howlContext.once('end', () => {
