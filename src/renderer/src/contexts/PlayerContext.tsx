@@ -1,4 +1,5 @@
 import { HowlerGlobalProps } from "@renderer/types/howlerType";
+import { suffleList, unsuffleList } from "@renderer/utils/suffle";
 import { ReactNode, createContext, useState } from "react";
 
 type PlayerProviderProps = {
@@ -11,10 +12,11 @@ type PlayQueueFunction = (music: number, queue : string[]) => void;
 
 export type PlayerHandler = {  
   playQueue: PlayQueueFunction,
-  holwerGlobal:  HowlerGlobalProps,
+  howlerGlobal:  HowlerGlobalProps,
   currentMusic: CurrentMusicProps,
   handleCurrentMusic: (isNext: boolean) => void,
   queueGlobal: QueueGlobalProps
+  checkIsSuffleList: (isSuffle: boolean) => void
 }
 
 const PlayerContext = createContext({} as PlayerHandler);
@@ -22,54 +24,101 @@ const PlayerContext = createContext({} as PlayerHandler);
 function PlayerProvider({ children } : PlayerProviderProps ){
   const [queueGlobal, setQueueGlobal] = useState<QueueGlobalProps>([]);
   const [currentMusic, setCurrentMusic] = useState<CurrentMusicProps>(null)
-  const [holwerGlobal, setHowlerGlobal] = useState<HowlerGlobalProps>(null);
+  const [howlerGlobal, setHowlerGlobal] = useState<HowlerGlobalProps>(null);
+  const { createHandlerHowler, handleSuffleMode, } = window.api.howler;
+  const { config } = window.api
+
 
   return (
     <PlayerContext.Provider 
       value={{
         playQueue,
-        holwerGlobal,
+        howlerGlobal,
+        checkIsSuffleList,
         currentMusic,
         queueGlobal,
         handleCurrentMusic
       }}
     >
-      {children}
+      { children }
     </PlayerContext.Provider>
   )
 
   // play list musics
-  function playQueue(music: number, queue : string[]){
-    const { playContextAudio } = window.api.howler;
-    const context = playContextAudio(
-      queue, 
-      music, 
-      setCurrentMusic, 
-      setHowlerGlobal
+  function playQueue(music: number, queue : string[]){    
+
+    const context = createHandlerHowler(
+      { 
+        currentQueue: queue, currentMusicIndex: music 
+      },
+      setHowlerGlobal,
+      setCurrentMusic as any
     );
-    
-    setCurrentMusic(music);
+
+
+    setHowlerGlobal(() =>  context );
+    setCurrentMusic( music );
     setQueueGlobal(queue);
-    setHowlerGlobal(() => context)
   }
 
   function handleCurrentMusic(isNext: boolean){
-    if(holwerGlobal && currentMusic !== null){
-      const nextStep = isNext ? (currentMusic + 1) : (currentMusic - 1);
+    const { handleNextMusic } = window.api.howler;
+    if(howlerGlobal && currentMusic !== null){
+      let nextStep = isNext ? (currentMusic + 1) : (currentMusic - 1);
 
-      setCurrentMusic(nextStep);
+      if(config("repeat_mode") === "repeat"){
+        if(nextStep > (queueGlobal.length - 1)){
+          nextStep = 0
+        }
 
-      holwerGlobal(
-        { currentMusicId: nextStep }, 
-        null, 
-        setHowlerGlobal
-      )
+        if(nextStep < 0){
+          nextStep = (queueGlobal.length - 1) 
+        }
+      }
+
+      if(queueGlobal[nextStep]){
+        setCurrentMusic(nextStep);
+  
+        howlerGlobal(
+          handleNextMusic,
+          undefined,
+          {updateMusicIndex : nextStep}
+        )
+      }
     }
   }
 
+  function checkIsSuffleList( suffle: boolean ){
+    if(!howlerGlobal || currentMusic === null) return;
+    let index : number
+    let queueUpdated : string[] = [];
+
+    if(suffle){
+      const randomList = suffleList(queueGlobal, currentMusic);
+      
+      index = 0;
+      queueUpdated = randomList;
+
+    }else{
+      const { newIndex, orderList } = unsuffleList(queueGlobal, currentMusic);
+
+      index = newIndex;
+      queueUpdated = orderList;
+    } 
+
+    setCurrentMusic(index);
+    setQueueGlobal(queueUpdated);
+
+    howlerGlobal(
+      handleSuffleMode,
+      undefined,
+      { updateQueue : queueUpdated, updateMusicIndex: index }
+    )
+  }
 }
 
 export {
   PlayerContext,
   PlayerProvider
 }
+
