@@ -3,10 +3,11 @@ import Store from "electron-store";
 type StoreType = {
   "volume" : number,
   "is_suffle" : boolean,
-  "repeat_mode" : string
+  "repeat_mode" : "repeat_one" | "repeat" | "one_turn"
 }
 
 const store = new Store<StoreType>({
+
   schema: {
     "volume" : {
       type: "number",
@@ -16,7 +17,7 @@ const store = new Store<StoreType>({
     },
     "is_suffle" : {
       type: "boolean",
-      default: false
+      default: true
     },
     "repeat_mode" : {
       type: "string",

@@ -1,89 +1,164 @@
 import { Howl } from "howler";
 import config from "./ElectronStore";
+import React from "react";
 
-type StateFunctionProp <T> = ((arg: T) => (T | void))
-type HandlerHowl <T> = (howl: Howl, state : StateFunctionProp<T>) => T;
-type UpdateCurrentMusic = { 
-  currentMusicId ?: number, 
-  updateQueueMusics ?: string[] 
-};
+type MusicQueueProps = {
+  currentQueue : string[],
+  currentMusicIndex : number
+}
 
-function playContextAudio( 
-  queueMusics: string[], 
-  initialCurrentMusic: number, 
-  setNextMusicQueue: StateFunctionProp<number>,
-  setHandleGlobal: StateFunctionProp<any>
-) {
-  const currentMusic = queueMusics[initialCurrentMusic];
-  // create context of music
-  const howlContext = new Howl({
-    src : currentMusic,
+type MusicContextUpdateProps = {
+  updateQueue ?: string[],
+  updateMusicIndex ?: number,
+}
+
+type AudioContextProps = { audioHowlContext: Howl, contextQueue: MusicQueueProps}
+
+type StateHowlerFunction <S> = React.Dispatch<React.SetStateAction<S>>;
+// type setHowlerGlobal = ReturnType<typeof createHandlerHowler>
+
+type HandlerHowlerCallback <V> = (
+  audioContext : AudioContextProps,
+  setStateReact : StateHowlerFunction<V>,
+  setHowlerValue ?: V | MusicContextUpdateProps
+) => void | MusicQueueProps;
+
+const createAudioContext = (musicPath : string) => {
+  return new Howl({
+    src: musicPath,
     html5: true,
-    volume: config("volume")
-  });
-  console.log(config("volume"))
-  howlContext.play();
-
-  howlContext.once('end', () => {
-    howlContext.unload();
-    
-    const nextMusicIndex = initialCurrentMusic += 1;
-    setNextMusicQueue(nextMusicIndex);
-    const autoUpdateHowler = playContextAudio(
-      queueMusics, 
-      nextMusicIndex, 
-      setNextMusicQueue, 
-      setHandleGlobal
-    ) 
-    
-    setHandleGlobal(() => autoUpdateHowler)
+    volume: 0.1
   })
+}
 
-  return function howlerHandler<T>(
-    { currentMusicId, updateQueueMusics } : UpdateCurrentMusic,
-    func ?: HandlerHowl<T>, 
-    updateState ?: StateFunctionProp<T>,
-  ){
-    if(func) {
-      // get access the current music info
-      func(howlContext, updateState || (() => {}))
-      return;
-    }
+const createHandlerHowler = (
+  contextQueue: MusicQueueProps, 
+  setStateHowler : StateHowlerFunction<any>,
+  setCurrentMusic : StateHowlerFunction<number>
+) => {
+  const { currentMusicIndex, currentQueue } = contextQueue;
+  const audioHowlContext = createAudioContext(
+    currentQueue[currentMusicIndex]
+  );
+  
+  audioHowlContext.play();
+  audioHowlContext.once("end", scheduleNextMusic(
+    contextQueue,
+    setStateHowler,
+    setCurrentMusic
+  ))
+  
+  return <V>(
+    handlerHowler : HandlerHowlerCallback<V>,
+    stateReactHandler ?: StateHowlerFunction<V>,
+    setHowlerValue ?: V | MusicContextUpdateProps
+  ) => {
+    const musicContext = handlerHowler(
+      { audioHowlContext, contextQueue }, 
+      ( stateReactHandler || (() => {})), 
+      setHowlerValue
+    );
 
-    // handle update current music or current queue musics
-    if(updateState && currentMusicId !== undefined){
-      // stop current music
-      howlContext.unload();
-      
-      const context = playContextAudio(
-        updateQueueMusics || queueMusics, 
-        currentMusicId, 
-        setNextMusicQueue,
-        setHandleGlobal
-      );      
-
-      // update howler that handle current state of music
-      updateState(<T>(() => context))
-    }
+    if(!musicContext) return;
+    const context = createHandlerHowler(
+      musicContext,
+      setStateHowler,
+      setCurrentMusic
+    );
+    setStateHowler(() => context);
   }
 }
 
-function currentDuration(howl: Howl, setDuration: StateFunctionProp<number>){
-  setDuration(
-    howl.seek()
-  )
+const scheduleNextMusic = (
+  contextQueue: MusicQueueProps, 
+  setHowlGlobal : StateHowlerFunction<any>,
+  setCurrentMusic: StateHowlerFunction<number>,
+) => {
+  return () => {
+    const { currentQueue, currentMusicIndex } = contextQueue;
+    let nextMusic = currentMusicIndex + 1;
+    const repeatMode = config("repeat_mode");
+  
+    if(repeatMode === "repeat_one") nextMusic = currentMusicIndex;
+    if(repeatMode === "repeat" && currentQueue[nextMusic] === undefined){
+      nextMusic = 0;
+    } 
+  
+    const context = createHandlerHowler(
+      { currentQueue, currentMusicIndex: nextMusic },
+      setHowlGlobal,
+      setCurrentMusic,
+    ) 
+
+    setCurrentMusic(nextMusic);
+    setHowlGlobal(() => context);
+  }
 }
 
-function setProgressMusic(howl: Howl, setProgress: StateFunctionProp<number>) {
-  const progress = setProgress(0);
+const handleNextMusic : HandlerHowlerCallback<MusicContextUpdateProps> = (
+  { audioHowlContext, contextQueue }, 
+  _, 
+  returnValue
+)  => {
+  if(!returnValue) return;
+
+  audioHowlContext.off("end");
+  audioHowlContext.unload();
+
+  const {  updateMusicIndex, updateQueue } = returnValue;
+  const contextMusic = {
+    currentQueue : updateQueue || contextQueue.currentQueue, 
+    currentMusicIndex: updateMusicIndex || contextQueue.currentMusicIndex  
+  }
   
-  if(progress || progress === 0){
-    howl.seek(progress)
+  return contextMusic 
+}
+
+const setPause: HandlerHowlerCallback<{}> = (
+  { audioHowlContext }
+) => {
+  audioHowlContext.pause();
+}
+
+const setPlay: HandlerHowlerCallback<{}> = (
+  { audioHowlContext }
+) => {
+  audioHowlContext.play();
+}
+
+const setProgressMusic : HandlerHowlerCallback<number> = (
+  {audioHowlContext}, _, newDuration
+) => {
+  if(typeof newDuration !== "number" ) return;
+
+  audioHowlContext.seek(newDuration)
+}
+
+const currentDuration : HandlerHowlerCallback<number> = (
+  {audioHowlContext}, setDuration
+) => {
+  const duration = audioHowlContext.seek()
+  setDuration(() => duration)
+} 
+
+const handleSuffleMode : HandlerHowlerCallback<MusicContextUpdateProps> = (
+  audioContext,
+  _,
+  musicContext
+) => {
+
+  if(musicContext && musicContext.updateQueue){
+    audioContext.contextQueue.currentQueue = musicContext.updateQueue
   }
 }
 
 export default {
-  playContextAudio,
+  createHandlerHowler,
+  scheduleNextMusic,
+  handleNextMusic,
   currentDuration,
-  setProgressMusic
+  setProgressMusic,
+  setPause,
+  setPlay,
+  handleSuffleMode
 }
