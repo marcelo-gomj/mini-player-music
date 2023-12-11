@@ -8,7 +8,7 @@ type HandleProgressProps = {
 }
 
 function HandleProgress({ children, total, setDuration } : HandleProgressProps){
-	const { holwerGlobal } = useContext(PlayerContext);
+	const { howlerGlobal } = useContext(PlayerContext);
   const progressBarRef = useRef<HTMLDivElement>(null)
 
 	return (
@@ -22,7 +22,7 @@ function HandleProgress({ children, total, setDuration } : HandleProgressProps){
 	)
 
 	function handleClickProgressBar(event : React.MouseEvent<HTMLDivElement, MouseEvent>){
-    if(!holwerGlobal || !progressBarRef.current || !total) return;
+    if(!howlerGlobal || !progressBarRef.current || !total) return;
 
     const { setProgressMusic } = window.api.howler;
 
@@ -32,10 +32,10 @@ function HandleProgress({ children, total, setDuration } : HandleProgressProps){
     const clickedDuration = (percentageClicked / 100) * total;
     
     setDuration(clickedDuration)
-    holwerGlobal(
-      {},
+    howlerGlobal(
       setProgressMusic,
-      _ => clickedDuration
+      undefined,
+      clickedDuration
     )
   }
 }

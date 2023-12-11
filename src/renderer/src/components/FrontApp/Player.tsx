@@ -9,14 +9,14 @@ import { PlayerContext } from "@renderer/contexts/PlayerContext";
 type MusicProps = MusicMetadata | null
 
 function Player(){
-	const { currentMusic, queueGlobal } = useContext(PlayerContext);
+	const { currentMusic, queueGlobal, howlerGlobal } = useContext(PlayerContext);
 	const [music, setMusic] = useState<MusicProps>();
 
 	useEffect(() => {
 		if(currentMusic !== null){
 			getMetadataAlbum(queueGlobal[currentMusic])
 		}
-	}, [currentMusic]);
+	}, [howlerGlobal]);
 
 	const musicStatus = music ? { 
 		title: music.title,

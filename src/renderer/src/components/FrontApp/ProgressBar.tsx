@@ -7,15 +7,15 @@ type ProgressBarProps = {
 }
 
 function ProgressBar({ durationTotal } : ProgressBarProps) {
-  const { currentMusic, holwerGlobal } = useContext(PlayerContext);
+  const { howlerGlobal } = useContext(PlayerContext);
   const [duration, setDuration] = useState(0);
   const time = useRef<any>(null);
 
-  useEffect(updateDuration, [currentMusic]);
+  useEffect(updateDuration, [howlerGlobal]);
 
   const calculatedProgress = progressBarUpdates(duration);
-  const progressBar = { left: `-${calculatedProgress || 100}%`};
-  const progressPointer = { right :`calc(${calculatedProgress || 100}% - 0.5rem)`}
+  const progressBar = { left: `-${ calculatedProgress || 100 }%`};
+  const progressPointer = { right :`calc(${ calculatedProgress || 100 }% - 0.5rem)`}
 
   return (
     <div
@@ -68,14 +68,13 @@ function ProgressBar({ durationTotal } : ProgressBarProps) {
   }
 
   function updateDuration(){
-    if(!holwerGlobal) return;
+    if(!howlerGlobal) return;
     const { currentDuration } = window.api.howler;
     
     clearUpdateDurationSeconds()
 
     time.current = setInterval(() => {
-      holwerGlobal(
-        {},
+      howlerGlobal(
         currentDuration,
         setDuration
       )
