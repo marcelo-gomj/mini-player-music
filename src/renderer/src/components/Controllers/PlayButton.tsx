@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ContextHowl } from "@renderer/types/howlerType";
 
 //@ts-ignore
@@ -8,22 +8,24 @@ import Pause from "../../assets/pause.svg?react"
 
 import { map } from "ramda";
 
-function PlayButton({ ctx : { playQueue, queueGlobal} } : ContextHowl){
-  const [isPlaying] = useState(false);
+function PlayButton({ ctx : { playQueue, queueGlobal, howlerGlobal} } : ContextHowl){
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { setPlay, setPause } = window.api.howler;
+  const { libraryChecker } =window.api
 
-  // useEffect(() => {
-  //   if(!holwerGlobal) return;
-    
-  //   const { checkIsPlaying } = window.api.howler;
-  //   holwerGlobal({}, checkIsPlaying, setIsPlaying );
-  // }, [currentMusic])
+  useEffect(() => {
+    if(!howlerGlobal) return;
+
+    setIsPlaying(true)
+
+  }, [howlerGlobal])
 
   return (
     <div 
     >{      
       isPlaying ?
         <div
-          // onClick={handlePauseButton}
+          onClick={handlePauseButton}
         >
           <Pause /> 
         </div>
@@ -39,7 +41,6 @@ function PlayButton({ ctx : { playQueue, queueGlobal} } : ContextHowl){
 
   function handlePlayButton(){    
     if(!queueGlobal.length){
-      const { libraryChecker } = window.api;
       const PATH_BASE = 'D:\\lib';
 
       const paths = map(
@@ -52,19 +53,18 @@ function PlayButton({ ctx : { playQueue, queueGlobal} } : ContextHowl){
       return;
     }
 
-    // if(holwerGlobal){
-    //   const { playMusic } = window.api.howler;
-    //   holwerGlobal({}, playMusic, setIsPlaying)
-    // }
-
+    if(!howlerGlobal) return; 
+    
+    howlerGlobal(setPlay);
+    setIsPlaying(true);
   }
 
-  // function handlePauseButton(){
-  //   if(!holwerGlobal) return;
-
-  //   const { pauseMusic } = window.api.howler;
-  //   holwerGlobal({}, pauseMusic, setIsPlaying)
-  // }
+  function handlePauseButton(){
+    if(!howlerGlobal) return;
+ 
+    howlerGlobal(setPause)
+    setIsPlaying(false)
+  }
 }
 
 export default PlayButton;

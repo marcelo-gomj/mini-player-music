@@ -2,15 +2,18 @@ import { ContextHowl } from "@renderer/types/howlerType";
 
 //@ts-ignore
 import Suffle from "../../assets/suffle.svg?react"
-import { useState } from "react";
-
+import { useContext, useState } from "react";
+import { PlayerContext } from "@renderer/contexts/PlayerContext";
 
 function SuffleButton({ } : ContextHowl){
+  const { checkIsSuffleList } = useContext(PlayerContext);
+  const { config } = window.api;
   const [isSuffle, setIsSuffle] = useState(false);
-
+  
+  
   return (
     <div
-      onClick={activeSuffle}
+      onClick={() => activeSuffle()}
       className={`${isSuffle ? "": "opacity-25"}`}
     >
       <Suffle />    
@@ -18,7 +21,12 @@ function SuffleButton({ } : ContextHowl){
   )
 
   function activeSuffle(){
-    setIsSuffle(!isSuffle);
+    const suffle = !isSuffle;
+
+    setIsSuffle(suffle);
+    config("is_suffle", suffle);
+    checkIsSuffleList(suffle)
+    console.log("SUFFLE", suffle);
   }
 }
 

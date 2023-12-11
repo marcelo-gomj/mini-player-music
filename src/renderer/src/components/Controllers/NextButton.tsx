@@ -6,24 +6,33 @@ import { useEffect, useState } from "react";
 
 function NextButton({ ctx : { handleCurrentMusic, currentMusic, queueGlobal }} : ContextHowl){
   const [hasNextMusic, setHasNextMusic] = useState(false);
+  const config = window.api.config
 
-  useEffect(() => {
-    if(currentMusic !== null && queueGlobal[currentMusic += 1]){
-      setHasNextMusic(true);
-    }
-  }, [currentMusic]);
+  useEffect(checkNextIsEnable, [currentMusic]);
+
+  const isEnableNext = (currentMusic !== null ? queueGlobal[currentMusic += 1] : currentMusic) || config("repeat_mode") === "repeat";
+
 
   return (
     <div
-      className={`${hasNextMusic ? '' : 'opacity-25'}`}
-      onClick={hasNextMusic ? handleClickNextMusic : undefined}
+      className={`${isEnableNext ? '' : 'opacity-25'}`}
+      onClick={isEnableNextMusic}
     >
       <Next />
     </div>
   )
 
-  function handleClickNextMusic(){
-    handleCurrentMusic(true);
+  function checkNextIsEnable(){
+    if(
+      currentMusic === null ||
+      (currentMusic += 1) > (queueGlobal.length - 1) 
+    ) return;
+    
+    setHasNextMusic(true);
+  }
+
+  function isEnableNextMusic(){
+    if(hasNextMusic) handleCurrentMusic(true)
   }
 }
 

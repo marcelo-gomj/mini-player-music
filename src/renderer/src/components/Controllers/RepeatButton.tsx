@@ -10,15 +10,17 @@ import Infinite from '../../assets/infinite.svg?react';
 //@ts-ignore
 import OneTurn from '../../assets/one-turn.svg?react';
 
-type RepeatMode  = 'one-turn'  | 'repeat' | 'repeat-one';
+// type RepeatMode  = 'one-turn'  | 'repeat' | 'repeat-one';
 
 function ReapeatButton({} : ContextHowl){
-  const [repeatState, setRepeatState] = useState<RepeatMode>('one-turn');
+  const { api: { config } } = window;
+  const [repeatState, setRepeatState] = useState(config("repeat_mode") || "one_turn");
+
 
   const iconsState = {
-    'one-turn' : OneTurn,
+    'one_turn' : OneTurn,
     'repeat' : Infinite,
-    'repeat-one' : Repeat
+    'repeat_one' : Repeat
   }
 
 
@@ -32,6 +34,7 @@ function ReapeatButton({} : ContextHowl){
     </div>
   )
 
+
   function flipIndex(index: number){
     return index > 2 ? 0 : index;
   }
@@ -40,8 +43,11 @@ function ReapeatButton({} : ContextHowl){
     const states = keys(iconsState);
 
     const indexMode = indexOf(repeatState, states) + 1;
+    const mode = states[flipIndex(indexMode)]
+  
+    config("repeat_mode", mode)
     setRepeatState(
-      states[flipIndex(indexMode)]
+      mode
     )
   }
 }
