@@ -3,9 +3,11 @@ import { useContext } from "react";
 import AddButton from "../../assets/plus.svg?react"
 import { ModalContext } from "@renderer/contexts/ModalContainer";
 import UpdateLibrary from "../UpdateLibraryModal/Modal";
+import { RouterContext } from "@renderer/contexts/Router";
 
 function NoSourceLibrary(){
-  const { handleModal } = useContext(ModalContext);
+  const { setRoute } = useContext(RouterContext); 
+  const { handleContentModal } = useContext(ModalContext);
 
   return (
     <section
@@ -31,20 +33,17 @@ function NoSourceLibrary(){
 
       <div
         className="absolute bottom-1 font-medium right-2 px-6 py-4 cursor-pointer"
+        onClick={handleSkipUpdateSource}
       >Não quero adicionar ainda</div>
     </section>
   )
 
-  function cancelAddForlderSource(){
-
+  function handleClickAddSources(){
+    handleContentModal(UpdateLibrary)
   }
 
-  function handleClickAddSources(){
-    handleModal(
-      UpdateLibrary, 
-      { title : "Adicione pasta de músicas" }, 
-      cancelAddForlderSource
-    )
+  function handleSkipUpdateSource(){
+    setRoute('player');
   }
 }
 

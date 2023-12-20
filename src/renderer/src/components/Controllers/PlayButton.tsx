@@ -11,7 +11,7 @@ import { map } from "ramda";
 function PlayButton({ ctx : { playQueue, queueGlobal, howlerGlobal} } : ContextHowl){
   const [isPlaying, setIsPlaying] = useState(false);
   const { setPlay, setPause } = window.api.howler;
-  const { libraryChecker } =window.api
+  const { libraryChecker } = window.api
 
   useEffect(() => {
     if(!howlerGlobal) return;

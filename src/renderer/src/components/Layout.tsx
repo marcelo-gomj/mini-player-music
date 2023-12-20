@@ -1,9 +1,17 @@
-import Player from "./FrontApp/Player";
+import { ReactNode } from "react";
+import Header from "./Header";
 
-function Layout() {
+type LayoutProps = {
+	children: ReactNode
+}
+
+function Layout({ children } : LayoutProps) {
 	return (
-		<div className="relative h-[100vh] ">
-			<Player />
+		<div className="flex relative h-[100vh] ">
+			<Header />
+			<div className="w-full">
+				{ children }
+			</div>
 		</div>
 	)
 }

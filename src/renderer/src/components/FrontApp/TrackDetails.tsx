@@ -14,7 +14,7 @@ function TrackDetails({
   music
 } : TrackDetailsProps ){
   return (
-    <section className="flex justify-between my-8">
+    <section className="flex justify-between my-8 w-full">
       <div>
         <p className="text-white font-medium line-clamp-1">
           {music?.track ? music.track + ". " : ""} { music?.title || "Sem titúlo"}

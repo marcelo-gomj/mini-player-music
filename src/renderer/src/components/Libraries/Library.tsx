@@ -14,8 +14,9 @@ import StarListIcon from "../../assets/magic-list.svg?react"
 import NoSourceLibrary from "./NoSourceLibrary";
 
 import { map, toPairs } from "ramda";
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import HeaderLibraryButton from "./HeaderLibraryButton"
+import { RouterContext } from "@renderer/contexts/Router"
 
 const headerIcons = {
   "current": [CurrentAlbumIcon, <div>current</div>],
@@ -29,6 +30,7 @@ const headerIcons = {
 type pathProps = keyof typeof headerIcons;
 
 function LIbrarySection() {
+  const { setRoute } = useContext(RouterContext);
   const [hasSourceDatabase, setHasSourceDatabase] = useState(false);
   const [libraryPath, setLibraryPath] = useState<pathProps>('current');
   const { prisma } = window.api;
@@ -41,7 +43,7 @@ function LIbrarySection() {
 
   return hasSourceDatabase ? (
     <section
-      className="absolute flex flex-col top-0 left-0 h-full w-full bg-black"
+      className="flex flex-col h-full w-full bg-black"
     >
       <div
         className="flex justify-around py-3"
@@ -65,6 +67,7 @@ function LIbrarySection() {
 
         <div
           className="flex items-center gap-2 py-2 w-[25%] text-center cursor-pointer rounded-full my-2 mx-4 "
+          onClick={() => setRoute('player')}
         >
           <AlbumIcon className="w-7 h-7" />
           Voltar

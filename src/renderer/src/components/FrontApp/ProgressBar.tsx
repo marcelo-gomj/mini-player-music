@@ -18,9 +18,7 @@ function ProgressBar({ durationTotal } : ProgressBarProps) {
   const progressPointer = { right :`calc(${ calculatedProgress || 100 }% - 0.5rem)`}
 
   return (
-    <div
-      className="space-y-2"
-    >
+    <div>
       <HandleProgress 
         setDuration={pointDuration}
         total={durationTotal}

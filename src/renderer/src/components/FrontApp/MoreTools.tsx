@@ -7,13 +7,18 @@ import Config from "../../assets/setting.svg?react";
 // @ts-ignore
 import Volume from "../../assets/volume.svg?react";
 import { map }from "ramda";
+import { useContext } from "react";
+import { RouterContext } from "@renderer/contexts/Router";
 
 function MoreTools(){
+  const { setRoute } = useContext(RouterContext);
   const tools = [
     {
       title: "library",
       Icon: Library,
-      handle: () => {}
+      handle: () => {
+        setRoute("library")
+      }
     },
     {
       title: "Eq",
@@ -44,9 +49,12 @@ function MoreTools(){
     </section>
   )
 
-  function generateToolsButtons({ title, Icon } : typeof tools[0]){
+  function generateToolsButtons({ title, Icon, handle } : typeof tools[0]){
     return (
-      <li key={title}>
+      <li 
+        key={title}
+        onClick={handle}
+      >
         <Icon
           className="cursor-pointer w-6 h-6 opacity-50 hover:opacity-100" 
         />

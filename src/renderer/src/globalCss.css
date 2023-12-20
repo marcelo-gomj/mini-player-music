@@ -2,7 +2,7 @@
   user-select: none;
 }
 .animation-open-modal{
-  animation: modalOpen 0.2s ease;
+  animation: modalOpen 0.3s ease;
 }
 
 .bar-scroll::-webkit-scrollbar {
@@ -34,8 +34,8 @@
 }
 
 .mode-verify{
-  stroke-dashoffset: calc(400 - (400 * 31.5) / 100) !important; 
-  animation: verify-animation 1s linear infinite;
+  stroke-dashoffset: calc(400 - (400 * 40) / 100) !important; 
+  animation: verify-animation 2s linear infinite;
 }
 
 @keyframes verify-animation {

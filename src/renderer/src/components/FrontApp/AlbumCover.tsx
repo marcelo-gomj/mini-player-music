@@ -20,17 +20,17 @@ function AlbumCover({
     <section
       onMouseEnter={handleShowOptionsWhenOverCover}
       onMouseLeave={handleRemoveOptions}
-      className="flex relative justify-center w-full py-2"
+      className="flex relative justify-center py-2"
     >
       <div className="cursor-pointer">
         { srcBase64 ?
           <img
 
-            className="w-[250px] h-[250px] rounded-xl shadow-[2px_0px_20px_rgb(6,6,6)]"
+            className="w-[180px] h-[180px] rounded-xl shadow-[2px_0px_20px_rgb(6,6,6)]"
             src={`data:${mimeType};base64,${srcBase64}`}
           /> :
           <div
-            className="flex items-center justify-center bg-base-400 w-[250px] h-[250px] rounded-xl shadow-[2px_0px_20px_rgb(6,6,6)]"
+            className="flex items-center justify-center bg-base-400 w-[180px] h-[180px] rounded-xl shadow-[2px_0px_20px_rgb(6,6,6)]"
           >
             Sem capa
           </div>

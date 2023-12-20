@@ -9,13 +9,13 @@ ElectronStore.initRenderer();
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 400,
-    height: 650,
-    maxWidth: 400,
-    maxHeight: 650,
+    width: 700,
+    height: 550,
+    maxWidth: 700,
+    maxHeight: 550,
     frame: false,
-    minWidth: 400,
-    minHeight: 650,
+    minWidth: 700,
+    minHeight: 550,
     show: false,
     
     autoHideMenuBar: true,
