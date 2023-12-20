@@ -1,6 +1,7 @@
 node_modules
 build
 database
+prisma/migrations
 test.md
 dist
 out
