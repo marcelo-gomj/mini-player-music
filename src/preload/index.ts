@@ -2,8 +2,10 @@ import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { parseFile } from "music-metadata";
 import howler from './Services/Howler';
-import { libraryChecker } from "./updateLibrary/chekFolderTest";
+import { selectFoldersSourcesLibrary } from "./Library/updateLibrary";
 import config from './Services/ElectronStore';
+import { initTest } from './Services/Metadata';
+import prisma from "./Services/Prisma";
 
 async function checkPath(path: string) {
   const meta = await parseFile(path);
@@ -23,8 +25,10 @@ async function checkPath(path: string) {
 const api = {
   checkPath,
   howler,
-  libraryChecker,
-  config
+  prisma,
+  selectFoldersSourcesLibrary,
+  config,
+  initTest
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
