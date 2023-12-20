@@ -7,5 +7,31 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:../database/dev.db"
+}
+
+model music {
+  id           Int      @default(dbgenerated())
+  title        String?
+  artist       String?
+  genres       String?
+  album        String?
+  music_artist String?
+  label        String?
+  track        Int?
+  year         Int?
+  current_disc Int?
+  total_discs  Int?
+  duration     Float
+  bitrate      Int?
+  channels     Int?
+  sample_rate  Int?
+  folder       String
+  path         String
+  played       Int      @default(0)
+  reated       Int      @default(0)
+  added_at     DateTime @default(now())
+  updated_at   DateTime @updatedAt()
+
+  @@id([id])
 }
