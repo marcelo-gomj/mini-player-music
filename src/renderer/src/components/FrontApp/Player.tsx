@@ -5,8 +5,9 @@ import TrackDetails from "./TrackDetails";
 import PlayerController from "./PlayerController";
 import MoreTools from "./MoreTools";
 import { PlayerContext } from "@renderer/contexts/PlayerContext";
+import LIbrarySection from "../Libraries/Library";
 
-type MusicProps = MusicMetadata | null
+type MusicProps = MusicMetadata | null;
 
 function Player(){
 	const { currentMusic, queueGlobal, howlerGlobal } = useContext(PlayerContext);
@@ -27,30 +28,37 @@ function Player(){
 	} : null;
 
 	return (
-		<section className="flex flex-col justify-between pb-0 h-full rounded-md">
-			<div className="flex flex-col gap-2 p-8">
-				<AlbumCover 
-					srcBase64={music?.srcCover} 
-					mimeType={music?.mimeType} 
-				/> 
+		<>
+			<section className="flex flex-col justify-between pb-0 h-full rounded-md">
+				<div className="flex flex-col gap-2 p-8">
+					<AlbumCover 
+						srcBase64={music?.srcCover} 
+						mimeType={music?.mimeType} 
+					/> 
 
-				<div className="px-1 space-y-8">
-					<TrackDetails 
-						music={musicStatus}		
-					/>
+					<div className="px-1 space-y-8">
+						<TrackDetails 
+							music={musicStatus}		
+						/>
 
-					<PlayerController durationTotal={music?.duration}/>
+						<PlayerController durationTotal={music?.duration}/>
 
+					</div>
 				</div>
-			</div>
 
-			<MoreTools />
-		</section>
+				<MoreTools />
+			</section>
+			<LIbrarySection />
+		</>
+
+
 	)
 
 	async function getMetadataAlbum(path: string) {
     const { checkPath } = window.api;
 		const { meta, image } = await checkPath(path);
+
+		console.log("META", meta);
 		
 		if(meta){
 			const { 
