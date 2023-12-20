@@ -1,10 +1,14 @@
 import Layout from "./components/Layout";
+import { ModalProvider } from "./contexts/ModalContainer";
 import { PlayerProvider } from "./contexts/PlayerContext";
+import "./globalCss.css";
 
 function App(): JSX.Element {
   return (
     <PlayerProvider>
-      <Layout />
+      <ModalProvider>
+        <Layout />
+      </ModalProvider>
     </PlayerProvider>
   )
 }
